@@ -83,4 +83,42 @@ commitCommand.action(async (_, { body, title, type }, argsP) => {
     }
 });
 
-new CliCommandApp([commitCommand]).start();
+const configUserCommand = genCommand(
+    "config-user",
+    [
+        {
+            name: "name",
+            optionType: "string",
+            flag: "-n",
+            alias: ["--name"],
+            required: false,
+        },
+        {
+            name: "email",
+            optionType: "string",
+            flag: "-e",
+            alias: ["--email"],
+            required: false,
+        },
+    ] as const,
+    [] as const
+);
+configUserCommand.action(async (_, { name, email }, argsP) => {
+    if (!name) name = await question({ message: "User name: " });
+    if (!email) email = await question({ message: "User email: " });
+
+    console.log("\nIs this correct?");
+
+    console.log("name: ", name);
+    console.log("email: ", email);
+
+    if (await confirm("Is this correct?")) {
+        console.log("\nCommitting...");
+        console.log(`git config user.name "${name}" && git config user.email "${email}"`);
+    } else {
+        console.log("\nAborting...");
+        process.exit(1);
+    }
+});
+
+new CliCommandApp([commitCommand, configUserCommand]).start();
