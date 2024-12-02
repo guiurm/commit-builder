@@ -3,8 +3,9 @@
     "version": "0.1.0",
     "main": "index.js",
     "scripts": {
-        "dev": "ts-node -r tsconfig-paths/register src/index.ts commit -t fix -m \"test test\"",
-        "dev2": "ts-node -r tsconfig-paths/register src/index.ts config-user"
+        "dev": "ts-node -r tsconfig-paths/register src/index.ts commit",
+        "dev2": "ts-node -r tsconfig-paths/register src/index.ts commit -t fix -m \"test test\"",
+        "dev3": "ts-node -r tsconfig-paths/register src/index.ts config-user"
     },
     "keywords": [],
     "author": "",
