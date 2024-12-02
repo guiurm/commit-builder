@@ -24,7 +24,7 @@
         "typescript": "^5.6.3"
     },
     "dependencies": {
-        "askly": "file:../askly/askly-0.1.0.tgz",
-        "cli-frw": "file:../cli-frw/cli-frw-0.0.0.tgz"
+        "askly": "file:../askly/askly-0.2.0.tgz",
+        "cli-frw": "file:../cli-frw/cli-frw-0.1.0.tgz"
     }
 }
