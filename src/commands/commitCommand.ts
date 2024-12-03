@@ -36,11 +36,12 @@ const commitCommand = genCommand(
 
             required: false,
         },
+        { name: "ammend", optionType: "boolean", flag: "-a", alias: ["--ammend"], required: false, defaultValue: false },
     ] as const,
     [] as const
 );
 
-commitCommand.action(async (_, { body, title, type }, argsP) => {
+commitCommand.action(async (_, { body, title, type, ammend }, argsP) => {
     let target = "";
     if (!type)
         try {
@@ -74,9 +75,10 @@ commitCommand.action(async (_, { body, title, type }, argsP) => {
                 })
             ).value;
 
+            target = await question({ message: "Target: " });
             if (!title) title = await question({ message: "Title: " });
             if (!body) body = await question({ message: "Body: " });
-            target = await question({ message: "Target: " });
+            if (ammend) ammend = (await confirm("Ammend commit?")) as boolean;
         } catch (error) {
             ErrorHandler.throw(new ExternalServiceError("Error obtaining commit info bia cly", "askly"));
         }
@@ -98,7 +100,8 @@ commitCommand.action(async (_, { body, title, type }, argsP) => {
 
     if (await confirm("Is this correct?")) {
         console.log("\nCommitting...");
-        const result = await exeCommand(`git commit -m "${type}${target}: ${title}\n\n${body}"`);
+        const command = `git commit ${ammend ? "--amend" : ""} -m "${type}${target}: ${title}\n\n${body}"`;
+        const result = await exeCommand(command);
         console.log("result:");
         console.log(result);
     } else {
