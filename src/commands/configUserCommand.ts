@@ -1,6 +1,7 @@
 import { confirm, question } from "askly";
 import { genCommand } from "cli-frw";
-import { getUser } from "../services/gitService";
+import { ErrorHandler, GitServiceError } from "../error-handler";
+import { setUser } from "../services/gitService";
 
 const configUserCommand = genCommand(
     "config-user",
@@ -34,8 +35,11 @@ configUserCommand.action(async (_, { name, email }, argsP) => {
     if (await confirm("Is this correct?")) {
         console.log("\Updating user configuration...");
         // await exeCommand(`git config user.name "${name}" && git config user.email "${email}"`);
-        const data = await getUser();
-        console.log(data);
+        try {
+            await setUser(name, email);
+        } catch (error) {
+            ErrorHandler.throw(new GitServiceError("Error updating user configuration", "setting user"));
+        }
     } else {
         console.log("\nAborting...");
         process.exit(1);

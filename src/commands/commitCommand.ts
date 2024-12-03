@@ -1,7 +1,7 @@
 import { confirm, question, select } from "askly";
 import { genCommand } from "cli-frw";
 import { AppError, ErrorHandler, ExternalServiceError } from "../error-handler";
-import { exeCommand, getUser } from "../services/gitService";
+import { exeCommand, getUser, listStagedFiles } from "../services/gitService";
 
 const commitTypes = ["feat", "fix", "docs", "style", "refactor", "test", "chore", "revert", "wip", "build"] as const;
 const commitCommand = genCommand(
@@ -83,12 +83,18 @@ commitCommand.action(async (_, { body, title, type }, argsP) => {
 
     target = target ? `(${target})` : target;
 
-    const user = await getUser();
-    console.log("\nauthor: ", user.toString());
+    const author = await getUser();
+    const stagedFiles = await listStagedFiles();
+    console.log("\nauthor: ", author.toString());
 
     console.log("type: ", type);
     console.log("title: ", title);
     console.log("body: ", body);
+
+    console.log("\nStaged files:");
+    console.log("added:\n", stagedFiles.added.join("\n"));
+    console.log("modified:\n", stagedFiles.modified.join("\n"));
+    console.log("deleted:\n", stagedFiles.deleted.join("\n"));
 
     if (await confirm("Is this correct?")) {
         console.log("\nCommitting...");
